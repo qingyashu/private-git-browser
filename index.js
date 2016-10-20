@@ -1,23 +1,16 @@
 const express = require("express");
-
 const fs = require('fs');
+
+const directoryPath = '../qq/';
+
 var app = express();
 app.use(express.static('public/'));
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+  console.log('Server listening on port 3000!');
 });
 
-app.get('/list-files', function (req, res) {
-  console.log('query:', req.query);
-  const testFolder = '../qq/';
-  var fileList;
-  fs.readdir(testFolder, (err, files) => {
-    fileList = files.map(file => file);
-    res.send(fileList);
-  });
-});
-
+// log in module
 app.get('/login', function(req, res) {
   var name = req.query.name;
   var pswd = req.query.pswd;
@@ -33,5 +26,48 @@ app.get('/login', function(req, res) {
     }
     res.send(false);
     return;
+  });
+});
+
+/**
+ * list file under path
+ * res.send(obj). obj: [ {filename: 'filename, type: 'file' / 'dir'}, ...]
+ */
+app.get('/ls', function(req, res) {
+  var fileList = [];
+  var path = directoryPath + req.query.path;
+  var type;
+  fs.readdir(path, (err, files) => {
+    
+    // TODO
+    var filePointer = files.entries(); 
+    while (filePointer.next().done)
+
+      type = 'file';
+      fs.stat(path + '/' + file, (err, stats) => {
+        if (stats.isFile()) type = 'file';
+        else if (stats.isDirectory()) type = 'dir';
+        else type = undefined;
+        console.log(file, type);
+        fileList.push({
+          filename: file, 
+          type: type
+        });
+      });
+
+    
+
+    console.log(fileList);
+
+    res.send(fileList);
+  });
+});
+
+app.get('/cat', function(req, res) {
+  var filePath = directoryPath + '/' + req.query.filename;
+  console.log(filePath);
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    console.log('get', data);
+    res.send(data);
   });
 });

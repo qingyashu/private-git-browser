@@ -1,0 +1,35 @@
+  - Functions 
+    - Basic
+      - Browse file
+        - List tree structure
+      - Open one file, see content
+      - Edit file
+      - Save file
+    - Git
+      - Commit
+      - Push
+      - Pull
+    - Visualize
+      - commit history
+      - content
+
+
+  - Pages
+    - Browse page
+      - step forward, backward (always pull when opening in browser)
+      - list all files
+      - Git command
+        - Status: highlight files using colors
+        - Commit
+        - Push
+    - Single file page 
+      - For txt file
+        - view mode
+        - edit mode
+      - For other file
+        - open picture, video, music in browser
+        - download
+    - Visualize
+      - Visualize commiting history
+        - (to be design)
+      - Visualize content 
