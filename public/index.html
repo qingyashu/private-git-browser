@@ -12,6 +12,7 @@
   <link href="./stylesheets/lib/bootstrap.css" rel="stylesheet">
   <link href="./stylesheets/index.css" rel="stylesheet">
   <script type="text/javascript" src="./scripts/lib/angular.js"></script>
+  <script type="text/javascript" src="./scripts/lib/jquery.js"></script>
 
   <title>Git Browser</title>
 </head>
@@ -19,9 +20,10 @@
   <div ng-app="listApp" ng-controller="listCtrl">
     <h1>File List</h1>
     <ul>
-      <li ng-repeat="x in filelist" ng-click="openFile(x)">{{x}}</li>
+      <li ng-repeat="x in filelist" ng-click="clickFile(x)">{{x.filename}}</li>
     </ul>
   </div>
+  <div id="file-viewer"></div>
 </body>
   <script type="text/javascript" src="./scripts/index.js"></script>
 </html>

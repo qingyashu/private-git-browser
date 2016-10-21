@@ -100,16 +100,16 @@ app.get('/cat', function(req, res) {
       }
     }
 
-    if (mediaType) {
-      fs.readFile(filePath, (err, data) => {
-        res.send(data);
+    console.log(res.get('Content-Type'));
+    fs.readFile(filePath, (err, data) => {
+      console.log(data);
+      res.send({
+        success: true,
+        data: data.toString('base64'),
+        mediaType: mediaType,
+        type: res.get('Content-Type')
       });
-    }
-    else {
-      fs.readFile(filePath, 'utf8', (err, data) => {
-        res.send(data);
-      });
-    }
+    });
 
   });
 });
