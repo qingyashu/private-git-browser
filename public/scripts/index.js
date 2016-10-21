@@ -1,6 +1,8 @@
 'use strict';
 /* global angular */
 
+// TODO: check login
+
 var app = angular.module('listApp', []);
 
 app.controller('listCtrl', function($scope, $http) {
@@ -28,5 +30,5 @@ app.controller('listCtrl', function($scope, $http) {
       $scope.fileContent = response.data;
       console.log($scope.fileContent);
     });
-  }
+  };
 });
