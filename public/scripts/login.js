@@ -17,6 +17,8 @@ app.controller('loginCtrl', function($scope, $http) {
     .then(function(response) {
       $scope.success = response.data;
       if ($scope.success) {
+        sessionStorage.setItem('login', true);
+        sessionStorage.setItem('username', $scope.name);
         window.location = "index.html";
         return;
       }

@@ -1,7 +1,9 @@
 'use strict';
 /* global angular, $ */
 
-// TODO: check login
+if (sessionStorage.getItem('login') !== 'true') {
+  window.location = "login.html";
+}
 
 var app = angular.module('listApp', []);
 
