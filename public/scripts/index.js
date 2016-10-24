@@ -14,26 +14,46 @@ app.controller('listCtrl', function($scope, $http) {
     }
   })
   .then(function(response) {
-    $scope.filelist = response.data;
+    $scope.filelist = [];
+    for (var file of response.data) {
+      $scope.filelist.push({
+        filename: file.filename, 
+        path: file.path,
+        type: file.type,
+        children: []
+      });
+    }
+    console.log($scope.filelist);
   });
 
   $scope.clickFile = function(fileObj, eventObj) {
-    var targetEl = eventObj.toElement;
+    console.log(fileObj);
     if (fileObj.type === 'dir') {
-      if (targetEl.attr('expand') === true) { // need collapse 
-        targetEl.empty();
+      if (fileObj.expanded === true) { // need collapse 
+        fileObj.children = [];
+        fileObj.expanded = false;
       }
       else { // need expand
         $http({
           method: 'GET',
           url: '/ls',
           params: {
-            path: fileObj.filename
+            path: fileObj.path + '/' + fileObj.filename
           }
         })
         .then(function(response) {
           console.log(response.data);
-          
+          fileObj.children = [];
+          for (var file of response.data) {
+            fileObj.children.push({
+              filename: file.filename, 
+              path: file.path, 
+              type: file.type,
+              children: []
+            });
+          }
+          fileObj.expanded = true;
+          console.log(fileObj);
         });
       }
         
@@ -43,7 +63,7 @@ app.controller('listCtrl', function($scope, $http) {
         method: 'GET',
         url: '/cat',
         params: {
-          'filename': fileObj.filename
+          'filename': fileObj.path + '/' + fileObj.filename
         }
       })
       .then(function(response) {
@@ -70,5 +90,6 @@ app.controller('listCtrl', function($scope, $http) {
         
       });
     }
+    eventObj.stopPropagation();
   };
 });

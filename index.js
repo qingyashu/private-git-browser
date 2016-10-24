@@ -40,6 +40,8 @@ app.get('/login', function(req, res) {
  * }, ...]
  */
 app.get('/ls', function(req, res) {
+  console.log('====================' + req.query.path + '====================');
+
   var fileList = [];
   var path = g_directoryPath + req.query.path;
   var type;
@@ -52,18 +54,17 @@ app.get('/ls', function(req, res) {
         res.send(fileList);
         return;
       }
-      console.log(next);
       var filename = next.value[1];
       fs.stat(path + '/' + filename, (err, stats) => {
         if (stats.isFile()) type = 'file';
         else if (stats.isDirectory()) type = 'dir';
         else type = undefined;
-        console.log(filename, type);
         fileList.push({
           filename: filename, 
           type: type,
           path: req.query.path
         });
+        console.log('name=' + filename + ' type=' + type + ' path=' + req.query.path);
         readStats(p);
       });
     };
@@ -86,6 +87,7 @@ const typesMap = {
  */
 app.get('/cat', function(req, res) {
   var filePath = g_directoryPath + '/' + req.query.filename;
+  console.log(' ~~~~~~~~~~~~ ' + filePath + ' ~~~~~~~~~~~~ ');
   fs.exists(filePath, (exists) => {
     if (!exists) {
       res.type('application/json');
