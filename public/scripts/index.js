@@ -17,18 +17,26 @@ app.controller('listCtrl', function($scope, $http) {
     $scope.filelist = response.data;
   });
 
-  $scope.clickFile = function(fileObj) {
+  $scope.clickFile = function(fileObj, eventObj) {
+    var targetEl = eventObj.toElement;
     if (fileObj.type === 'dir') {
-      $http({
-        method: 'GET',
-        url: '/ls',
-        params: {
-          path: fileObj.filename
-        }
-      })
-      .then(function(response) {
-        // TODO　toggle directories 
-      });
+      if (targetEl.attr('expand') === true) { // need collapse 
+        targetEl.empty();
+      }
+      else { // need expand
+        $http({
+          method: 'GET',
+          url: '/ls',
+          params: {
+            path: fileObj.filename
+          }
+        })
+        .then(function(response) {
+          console.log(response.data);
+          
+        });
+      }
+        
     }
     else {
       $http({

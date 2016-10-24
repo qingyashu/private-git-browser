@@ -17,10 +17,10 @@
   <title>Git Browser</title>
 </head>
 <body>
-  <div ng-app="listApp" ng-controller="listCtrl">
+  <div ng-app="listApp" ng-controller="listCtrl" id="file-list-panel">
     <h1>File List</h1>
-    <ul>
-      <li ng-repeat="x in filelist" ng-click="clickFile(x)">{{x.filename}}</li>
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="x in filelist" ng-click="clickFile(x, $event)" dir="/" filename="{{x.filename}}">{{x.filename}}</li>
     </ul>
   </div>
   <div id="file-viewer"></div>

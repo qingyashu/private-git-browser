@@ -1,0 +1,13 @@
+#file-list-panel {
+  margin: auto;
+  width: 70%;
+  padding-top: 50px;
+}
+
+#file-list-panel .list-group-item {
+  cursor: pointer;
+}
+
+#file-list-panel .list-group-item:hover {
+  background-color: #f5f5f5;
+}

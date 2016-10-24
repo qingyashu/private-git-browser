@@ -33,7 +33,11 @@ app.get('/login', function(req, res) {
 /**
  * list file under path
  * req.query: {path: path}
- * res.send(obj). obj: [ {filename: 'filename, type: 'file' / 'dir'}, ...]
+ * res.send(obj). obj: [ {
+ *   filename: filename, 
+ *   type: 'file' / 'dir',
+ *   path: path
+ * }, ...]
  */
 app.get('/ls', function(req, res) {
   var fileList = [];
@@ -57,7 +61,8 @@ app.get('/ls', function(req, res) {
         console.log(filename, type);
         fileList.push({
           filename: filename, 
-          type: type
+          type: type,
+          path: req.query.path
         });
         readStats(p);
       });
@@ -101,15 +106,28 @@ app.get('/cat', function(req, res) {
     }
 
     console.log(res.get('Content-Type'));
-    fs.readFile(filePath, (err, data) => {
-      console.log(data);
-      res.send({
-        success: true,
-        data: data.toString('base64'),
-        mediaType: mediaType,
-        type: res.get('Content-Type')
+    
+    if (mediaType) {
+      fs.readFile(filePath, (err, data) => {
+        var toSend = data.toString('base64');
+        res.send({
+          success: true,
+          data: toSend,
+          mediaType: mediaType,
+          type: res.get('Content-Type')
+        });
       });
-    });
+    }
+    else {
+      fs.readFile(filePath, 'utf8', (err, data) => {
+        res.send({
+          success: true,
+          data: data,
+          mediaType: mediaType,
+          type: res.get('Content-Type')
+        });
+      });
+    }
 
   });
 });
@@ -197,3 +215,5 @@ app.get('/git_pull', function(req, res) {
     return;
   });
 });
+
+// TODO: remove file
