@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="./images/favicon.ico">
+
+    <script type="text/javascript" src="./scripts/lib/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="./scripts/lib/angular.min.js"></script>
+    
+    <script type="text/javascript" src="./scripts/lib/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="./stylesheets/lib/jquery.mobile-1.4.5.min.css" />
+    <title>Git Browser</title>
+  </head>
+  <body>
+
+    <div data-role="page" ng-app="listApp" ng-controller="listCtrl">
+      <div data-role="header" data-position="fixed" data-fullscreen="true">
+        <h1 class="ui-title">{{currentPath}}</h1>
+      </div>
+      <div role="main" class="ui-content">
+        <ul>
+          <li ng-repeat="x in filelist" ng-click="clickFile(x, $event)" >
+            {{x.filename}}
+          </li>
+        </ul>
+      </div>
+      <div data-role="footer" data-position="fixed" data-fullscreen="true">
+        <h1>Fixed Footer!</h1>
+      </div>
+    </div>
+
+  </body>
+  <script type="text/javascript" src="./scripts/index.mobile.js"></script>
+</html>
