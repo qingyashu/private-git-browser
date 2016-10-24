@@ -10,25 +10,33 @@
     <link rel="icon" href="./images/favicon.ico">
 
     <script type="text/javascript" src="./scripts/lib/jquery-1.12.4.min.js"></script>
-    <script type="text/javascript" src="./scripts/lib/angular.min.js"></script>
+    <!-- <script type="text/javascript" src="./scripts/lib/angular.min.js"></script> -->
     
     <script type="text/javascript" src="./scripts/lib/jquery.mobile-1.4.5.min.js"></script>
     <link rel="stylesheet" href="./stylesheets/lib/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" href="./stylesheets/index.mobile.css" />
     <title>Git Browser</title>
   </head>
   <body>
 
-    <div data-role="page" ng-app="listApp" ng-controller="listCtrl">
+    <div data-role="page" class="page" id="list-page">
       <div data-role="header" data-position="fixed" data-fullscreen="true">
-        <h1 class="ui-title">{{currentPath}}</h1>
+        <h1 class="ui-title" id="path-container"></h1>
       </div>
       <div role="main" class="ui-content">
-        <ul>
-          <li ng-repeat="x in filelist" ng-click="clickFile(x, $event)" >
-            {{x.filename}}
-          </li>
+        <ul data-role="listview" data-inset="true" id="directory-container">
         </ul>
       </div>
+      <div data-role="footer" data-position="fixed" data-fullscreen="true">
+        <h1>Fixed Footer!</h1>
+      </div>
+    </div>
+
+    <div data-role="page" class="page" id="view-page">
+      <div data-role="header" data-position="fixed" data-fullscreen="true">
+        <h1 class="ui-title"></h1>
+      </div>
+      <div role="main" class="ui-content" id="file-viewer"></div>
       <div data-role="footer" data-position="fixed" data-fullscreen="true">
         <h1>Fixed Footer!</h1>
       </div>
