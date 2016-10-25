@@ -2,6 +2,7 @@
 /* global $ */
 var Viewer = {};
 Viewer.currentPageCount = 0;
+Viewer.dialogAtPageID;
 
 if (sessionStorage.getItem('login') !== 'true') {
   window.location = "login.html";
@@ -85,11 +86,16 @@ Viewer.constructListPage = function(list, dirname) {
   // title of the new page
   pageNode.find('h1.path-container').text(dirname);
 
+  // click buttons in navbar
+  pageNode.find('.nav-button').click(function() {
+    Viewer.dialogAtPageID = Number($.mobile.activePage.attr('id'));
+    console.log(Viewer.dialogAtPageID);
+  });
+
   // construct new page ID 
   pageNode.attr('id', Viewer.currentPageCount);
   $.mobile.changePage('#' + pageNode.attr('id')); 
   Viewer.currentPageCount ++;
-
 };
 
 Viewer.loadTextFile = function(data) {
@@ -140,3 +146,38 @@ $.get('/ls', {
   }
 );
 
+$('#pull-button').click(function() {
+  console.log('pull');
+  $.get('/git_pull', function(data, states) {
+    $.mobile.changePage('#' + Viewer.dialogAtPageID);
+    setTimeout(function() {
+      $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Pulled');
+      $.mobile.activePage.find('.popupBasic').popup('open'); 
+    }, 1000);
+  });
+});
+
+$('#commit-button').click(function() {
+  console.log('commit');
+  $.get('/git_commit', {
+      message: sessionStorage.getItem('username') + ' commit in web, ' + Date()
+    }, 
+    function(data, states) {
+      $.mobile.changePage('#' + Viewer.dialogAtPageID);
+      setTimeout(function() {
+        $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Committed');
+        $.mobile.activePage.find('.popupBasic').popup('open'); 
+      }, 1000);
+    });
+});
+
+$('#push-button').click(function() {
+  console.log('push');
+  $.get('/git_push', function(data, states) {
+    $.mobile.changePage('#' + Viewer.dialogAtPageID);
+    setTimeout(function() {
+      $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Pushed');
+      $.mobile.activePage.find('.popupBasic').popup('open'); 
+    }, 1000);
+  });
+});
