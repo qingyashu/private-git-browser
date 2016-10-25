@@ -22,11 +22,13 @@ Viewer.clickDir = function(dirname, path) {
     path: path + '/' + dirname
   }, 
   function(data) {
-    Viewer.constructListPage(data);
+    var dirTitle = (path + '/' + dirname).replace(/\/+/g, '/');
+    Viewer.constructListPage(data, dirTitle);
   });
 };
 
-Viewer.constructListPage = function(list) {
+Viewer.constructListPage = function(list, dirname) {
+  // data objects
   var filelist = [];
   var file;
   list.sort(function(a, b) {
@@ -38,16 +40,14 @@ Viewer.constructListPage = function(list) {
       path: file.path,
       type: file.type
     });
-  }
-  
+  }  
   console.log(filelist);
 
+  // add contents
   var pageNode = $('#list-page-template').clone();
   $('#view-page').before(pageNode);
-
   var ulNode = pageNode.find('ul.list-container');
   ulNode.empty();
-
   var liNode;
   for (file of filelist) {
     liNode = $('<li></li>');
@@ -59,6 +59,7 @@ Viewer.constructListPage = function(list) {
     ulNode.append(liNode);
   }
   
+  // bind clicking events
   ulNode.find('li').on('click', function() {
     var filename = $(this).data('filename');
     var path = $(this).data('path');
@@ -72,6 +73,15 @@ Viewer.constructListPage = function(list) {
     }
   });
 
+  // back button
+  var activePageID = Number($.mobile.activePage.attr('id'));
+  var backButton = $('<a href="#' + activePageID + '" data-rel="back" class="ui-btn ui-btn-left ui-alt-icon ui-nodisc-icon ui-corner-all ui-btn-icon-notext ui-icon-carat-l">Back</a>');
+  pageNode.find('.header').append(backButton);
+
+  // title of the new page
+  pageNode.find('h1.path-container').text(dirname);
+
+  // construct new page ID 
   pageNode.attr('id', Viewer.currentPageCount);
   $.mobile.changePage('#' + pageNode.attr('id')); 
   Viewer.currentPageCount ++;
@@ -107,7 +117,7 @@ $.get('/ls', {
     path: '/'
   },
   function(data) {
-    Viewer.constructListPage(data);
+    Viewer.constructListPage(data, '/');
   }
 );
 
