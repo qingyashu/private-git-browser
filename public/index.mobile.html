@@ -30,14 +30,22 @@
       <div data-role="footer" data-position="fixed" data-fullscreen="true">
         <div data-role="navbar">
           <ul>
-            <li><a data-icon="arrow-d">Pull</a></li>
-            <li><a data-icon="check">Commit</a></li>
-            <li><a data-icon="arrow-u">Push</a></li>
-            <li><a data-icon="plus">Create</a></li>
+            <li><a class="nav-button" data-icon="arrow-d">Pull</a></li>
+            <li><a class="nav-button" href="#contact" data-icon="check">Commit</a></li>
+            <li><a class="nav-button" data-icon="arrow-u">Push</a></li>
+            <li><a class="nav-button" data-icon="plus">Create</a></li>
           </ul>
         </div><!-- /navbar -->
       </div>
     </div>
+
+    <div data-role="dialog" id="contact">
+      <div data-role="header"><h1>Clicked!</h1></div>
+      <div data-role="content">
+        <p>Clicked content!</p>
+        <a href="#" data-rel="back" data-role="button">Go back</a>
+      </div>
+    </div>   
 
     <div data-role="page" class="page" id="view-page">
       <div data-role="header" data-position="fixed" data-fullscreen="true" class="header">

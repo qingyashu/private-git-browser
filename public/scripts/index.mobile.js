@@ -78,8 +78,8 @@ Viewer.constructListPage = function(list, dirname) {
   });
 
   // back button
-  var activePageID = Number($.mobile.activePage.attr('id'));
-  var backButton = $('<a href="#' + activePageID + '" data-rel="back" class="ui-btn ui-btn-left ui-alt-icon ui-nodisc-icon ui-corner-all ui-btn-icon-notext ui-icon-carat-l">Back</a>');
+  // var activePageID = Number($.mobile.activePage.attr('id'));
+  var backButton = $('<a data-rel="back" class="ui-btn ui-btn-left ui-alt-icon ui-nodisc-icon ui-corner-all ui-btn-icon-notext ui-icon-carat-l">Back</a>');
   pageNode.find('.header').append(backButton);
 
   // title of the new page
@@ -89,6 +89,7 @@ Viewer.constructListPage = function(list, dirname) {
   pageNode.attr('id', Viewer.currentPageCount);
   $.mobile.changePage('#' + pageNode.attr('id')); 
   Viewer.currentPageCount ++;
+
 };
 
 Viewer.loadFile = function(responseData) {
@@ -114,10 +115,6 @@ Viewer.loadFile = function(responseData) {
     }
   }
 
-  // back button 
-  var activePageID = Number($.mobile.activePage.attr('id'));
-  $('#view-page').find('.back-button').attr('href', '#' + activePageID);
-
   // display title 
   $('#view-page').find('#file-title').text(Viewer.removeDuplicateSlash(responseData.filename));
 
@@ -133,4 +130,3 @@ $.get('/ls', {
     Viewer.constructListPage(data, '/');
   }
 );
-
