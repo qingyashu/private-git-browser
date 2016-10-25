@@ -34,7 +34,7 @@
             <li><a class="nav-button dialog-trigger-button" href="#pull-dialog" data-icon="arrow-d">Pull</a></li>
             <li><a class="nav-button dialog-trigger-button" href="#commit-dialog" data-icon="check">Commit</a></li>
             <li><a class="nav-button dialog-trigger-button" href="#push-dialog" data-icon="arrow-u">Push</a></li>
-            <li><a class="nav-button dialog-trigger-button" data-icon="plus">Create</a></li>
+            <li><a class="nav-button dialog-trigger-button" href="#filename-dialog" data-icon="plus">Create</a></li>
           </ul>
         </div><!-- /navbar -->
       </div>
@@ -43,6 +43,7 @@
       </div>
     </div>
 
+    <!-- Pull Dialog -->
     <div data-role="dialog" id="pull-dialog">
       <div data-role="header"><h1>Pull?</h1></div>
       <div data-role="content">
@@ -54,6 +55,7 @@
       </div>
     </div>
 
+    <!-- Commit Dialog -->
     <div data-role="dialog" id="commit-dialog">
       <div data-role="header"><h1>Commit?</h1></div>
       <div data-role="content">
@@ -65,6 +67,7 @@
       </div>
     </div>
 
+    <!-- Push Dialog -->
     <div data-role="dialog" id="push-dialog">
       <div data-role="header"><h1>Push?</h1></div>
       <div data-role="content">
@@ -92,6 +95,7 @@
       </div>
     </div>
 
+    <!-- Edit Page-->
     <div data-role="page" class="page" id="edit-page">
       <div data-role="header" data-position="fixed" data-fullscreen="true" class="header">
         <h1 class="ui-title" id="edit-file-title"></h1>
@@ -109,12 +113,26 @@
       </div>
     </div>
 
+    <!-- Save Editing Result Dialog -->
     <div data-role="dialog" id="save-dialog">
       <div data-role="header"><h1>Save?</h1></div>
       <div data-role="content">
         <p>Are you sure to save?</p>
         <div class="ui-grid-a">
           <div class="ui-block-a" id="save-button"><a class="ui-btn ui-shadow ui-corner-all">Save</a></div>
+          <div class="ui-block-b"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Cancel</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Name of New File Dialog -->
+    <div data-role="dialog" id="filename-dialog">
+      <div data-role="header"><h1>Create New File?</h1></div>
+      <div data-role="content">
+        <p>Please input name of the file</p>
+        <input type="text" id="file-name" value="">
+        <div class="ui-grid-a">
+          <div class="ui-block-a" id="create-button"><a class="ui-btn ui-shadow ui-corner-all">Create</a></div>
           <div class="ui-block-b"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Cancel</a></div>
         </div>
       </div>

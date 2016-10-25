@@ -1,13 +1,19 @@
 
 .page {
   margin-top: 42px;
+  margin-bottom: 60px;
 }
 
 #edit-page {
   margin-top: 60px;
-  margin-bottom: 60px;
 }
 
 #edit-page textarea {
   margin: auto;
+}
+
+#file-viewer img, 
+#file-viewer audio, 
+#file-viewer video {
+  width: 100%;
 }

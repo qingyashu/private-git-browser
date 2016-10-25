@@ -37,7 +37,11 @@ Viewer.constructListPage = function(list, dirname) {
   var filelist = [];
   var file;
   list.sort(function(a, b) {
-    return a.type > b.type;
+    if (a.type === 'dir' && b.type === 'file') return -1;
+    if (b.type === 'dir' && a.type === 'file') return 1;
+    if (a.filename > b.filename) return 1;
+    if (a.filename < b.filename) return -1;
+    return 0;
   });
   for (file of list) {
     filelist.push({
@@ -98,7 +102,70 @@ Viewer.constructListPage = function(list, dirname) {
   pageNode.attr('id', Viewer.currentPageCount);
   $.mobile.changePage('#' + pageNode.attr('id')); 
   Viewer.currentPageCount ++;
+
+  // remember dirname
+  pageNode.data('dirname', dirname)
 };
+
+Viewer.refreshDirPage = function(pageID) {
+  var pageNode = $('#' + pageID);
+  var dirname = pageNode.data('dirname');
+
+  $.get('/ls', {
+    path: dirname
+  }, 
+  function(list) {
+    // data objects
+    var filelist = [];
+    var file;
+    list.sort(function(a, b) {
+      if (a.type === 'dir' && b.type === 'file') return -1;
+      if (b.type === 'dir' && a.type === 'file') return 1;
+      if (a.filename > b.filename) return 1;
+      if (a.filename < b.filename) return -1;
+      return 0;
+    });
+    for (file of list) {
+      filelist.push({
+        filename: file.filename, 
+        path: file.path,
+        type: file.type
+      });
+    }  
+    console.log(filelist);
+
+    // add contents
+    var ulNode = pageNode.find('ul.list-container');
+    ulNode.empty();
+    var liNode;
+    for (file of filelist) {
+      liNode = $('<li></li>');
+      if (file.type === 'dir') liNode.append('<a href="#">' + file.filename + '</a>');
+      else liNode.append(file.filename);
+      liNode.data('filename', file.filename);
+      liNode.data('path', file.path);
+      liNode.data('type', file.type);
+      ulNode.append(liNode);
+    }
+    
+    // bind clicking events
+    ulNode.find('li').on('click', function() {
+      var filename = $(this).data('filename');
+      var path = $(this).data('path');
+      var type = $(this).data('type');
+      console.log('clicking on ', filename, path, type);
+      if (type === 'dir') {
+        Viewer.clickDir(filename, path);
+      }
+      else {
+        Viewer.clickFile(filename, path);
+      }
+    });
+
+    ulNode.listview('refresh');
+    $.mobile.changePage('#' + pageID);
+  });
+}
 
 Viewer.loadTextFile = function(data, filename) {
   $('#file-viewer').data('content', data);
@@ -229,3 +296,19 @@ $('#save-button').click(function() {
 //   Viewer.dialogAtPageID = $.mobile.activePage.attr('id');
 //   console.log(Viewer.dialogAtPageID);
 // });
+
+// create with new file name  
+$('#create-button').click(function() {
+  $.ajax({
+    method: 'POST',
+    url: '/write', 
+    dataType: 'json', 
+    data: {
+      filename: $('#file-name').val(),
+      content: ''
+    }, 
+    success: function(data) {
+      Viewer.refreshDirPage(Viewer.dialogAtPageID);
+    }
+  });
+});
