@@ -1,5 +1,6 @@
 const express = require("express");
 const fs = require('fs');
+const bodyParser = require('body-parser');
 
 const g_directoryPath = '../test_repo/';
 const git = require('simple-git')(g_directoryPath);
@@ -137,14 +138,19 @@ app.get('/cat', function(req, res) {
   });
 });
 
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 /**
  * write file , or create file if not exists
  * req.query: {filename: filename, content: content}
  * res.send(boolean success)
  */
 app.post('/write', function(req, res) {
-  var filePath = g_directoryPath + '/' + req.query.filename;
-  fs.writeFile(filePath, req.query.content, 'utf8', (err) => {
+  console.log(req.body);
+  var filePath = g_directoryPath + '/' + req.body.filename;
+  console.log('receive saving request ' + filePath);
+  fs.writeFile(filePath, req.body.content, 'utf8', (err) => {
     if (err) {
       res.send({
         success: false,

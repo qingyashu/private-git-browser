@@ -79,16 +79,18 @@ Viewer.constructListPage = function(list, dirname) {
   });
 
   // back button
-  // var activePageID = Number($.mobile.activePage.attr('id'));
-  var backButton = $('<a data-rel="back" class="ui-btn ui-btn-left ui-alt-icon ui-nodisc-icon ui-corner-all ui-btn-icon-notext ui-icon-carat-l">Back</a>');
-  pageNode.find('.header').append(backButton);
+  if (Viewer.currentPageCount > 0) {
+    var activePageID = $.mobile.activePage.attr('id');
+    var backButton = $('<a href="#' + activePageID + '" class="ui-btn ui-btn-left ui-alt-icon ui-nodisc-icon ui-corner-all ui-btn-icon-notext ui-icon-carat-l">Back</a>');
+    pageNode.find('.header').append(backButton);
+  }
 
   // title of the new page
   pageNode.find('h1.path-container').text(dirname);
 
   // click buttons in navbar
-  pageNode.find('.nav-button').click(function() {
-    Viewer.dialogAtPageID = Number($.mobile.activePage.attr('id'));
+  pageNode.find('.dialog-trigger-button').click(function() {
+    Viewer.dialogAtPageID = $.mobile.activePage.attr('id');
     console.log(Viewer.dialogAtPageID);
   });
 
@@ -98,22 +100,26 @@ Viewer.constructListPage = function(list, dirname) {
   Viewer.currentPageCount ++;
 };
 
-Viewer.loadTextFile = function(data) {
-  var lines = data.split('\n');
+Viewer.loadTextFile = function(data, filename) {
+  $('#file-viewer').data('content', data);
+  $('#file-viewer').data('filename', filename);
   $('#file-viewer').empty();
-  for (var line of lines) {
-    $('#file-viewer').append('<p><pre>' + line + '</pre></p>');
-  }
+  $('#file-viewer').html('<pre>' + data + '</pre>');
+  // var lines = data.split('\n');
+  // $('#file-viewer').empty();
+  // for (var line of lines) {
+  //   $('#file-viewer').append('<p><pre>' + line + '</pre></p>');
+  // }
 };
 
 Viewer.loadFile = function(responseData) {
   // load file content 
   if (responseData.mediaType === false) { // text
-    
-    Viewer.loadTextFile(responseData.data);
+    $('#view-page').find('.footer').show();
+    Viewer.loadTextFile(responseData.data, Viewer.removeDuplicateSlash(responseData.filename));
   }
   else {
-    console.log(responseData.type);
+    $('#view-page').find('.footer').hide();
     var classType = responseData.type.split('/')[0];
     if (classType === 'image') {
       $('#file-viewer').html('<img id="image" src="data:' + responseData.type + ';base64, ' + responseData.data + '"/>');
@@ -132,6 +138,10 @@ Viewer.loadFile = function(responseData) {
 
   // display title 
   $('#view-page').find('#file-title').text(Viewer.removeDuplicateSlash(responseData.filename));
+
+  // remember back page id
+  var activePageID = $.mobile.activePage.attr('id');
+  $('#view-page-back-button').attr('href', '#' + activePageID);
 
   // change to page 
   $.mobile.changePage('#view-page'); 
@@ -181,3 +191,41 @@ $('#push-button').click(function() {
     }, 1000);
   });
 });
+
+// jump to editing page
+$('#edit-button').click(function() {
+  $('#edit-page').find('textarea').val($('#file-viewer').data('content'));
+  $('#edit-page').find('#edit-file-title').html($('#file-viewer').data('filename'));
+  $.mobile.changePage('#edit-page');
+  var width = $(window).width() - 30;
+  $('#edit-viewer').find('textarea').css('width', width);
+});
+
+// save edit result 
+$('#save-button').click(function() {
+  $.ajax({
+    method: 'POST',
+    url: '/write', 
+    dataType: 'json', 
+    data: {
+      filename: $('#file-viewer').data('filename'),
+      content: $('#edit-viewer').find('textarea').val()
+    }, 
+    success: function(data) {
+      // back to view page 
+      $.mobile.changePage('#view-page');
+      if (data.success) {
+        $('#file-viewer').html('<pre>' + $('#edit-viewer').find('textarea').val() + '</pre>');
+        setTimeout(function() {
+          $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Success!');
+          $.mobile.activePage.find('.popupBasic').popup('open'); 
+        }, 1000);
+      }
+    }
+  });
+});
+
+// $('.dialog-trigger-button').click(function() {
+//   Viewer.dialogAtPageID = $.mobile.activePage.attr('id');
+//   console.log(Viewer.dialogAtPageID);
+// });

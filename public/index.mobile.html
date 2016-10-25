@@ -19,6 +19,7 @@
   </head>
   <body>
 
+    <!-- List Page-->
     <div data-role="page" class="page" id="list-page-template">
       <div data-role="header" data-position="fixed" data-fullscreen="true" class="header">
         <h1 class="ui-title path-container"></h1>
@@ -30,10 +31,10 @@
       <div data-role="footer" data-position="fixed" data-fullscreen="true">
         <div data-role="navbar">
           <ul>
-            <li><a class="nav-button" href="#pull-dialog" data-icon="arrow-d">Pull</a></li>
-            <li><a class="nav-button" href="#commit-dialog" data-icon="check">Commit</a></li>
-            <li><a class="nav-button" href="#push-dialog" data-icon="arrow-u">Push</a></li>
-            <li><a class="nav-button" data-icon="plus">Create</a></li>
+            <li><a class="nav-button dialog-trigger-button" href="#pull-dialog" data-icon="arrow-d">Pull</a></li>
+            <li><a class="nav-button dialog-trigger-button" href="#commit-dialog" data-icon="check">Commit</a></li>
+            <li><a class="nav-button dialog-trigger-button" href="#push-dialog" data-icon="arrow-u">Push</a></li>
+            <li><a class="nav-button dialog-trigger-button" data-icon="plus">Create</a></li>
           </ul>
         </div><!-- /navbar -->
       </div>
@@ -75,20 +76,47 @@
       </div>
     </div>
 
-    
-
+    <!-- View Page-->
     <div data-role="page" class="page" id="view-page">
       <div data-role="header" data-position="fixed" data-fullscreen="true" class="header">
-        <a href="#" data-rel="back" class="back-button ui-btn ui-btn-left ui-alt-icon ui-nodisc-icon ui-corner-all ui-btn-icon-notext ui-icon-carat-l">Back</a>
+        <a id="view-page-back-button" class="back-button ui-btn ui-btn-left ui-alt-icon ui-nodisc-icon ui-corner-all ui-btn-icon-notext ui-icon-carat-l">Back</a>
         <h1 class="ui-title" id="file-title"></h1>
       </div>
       <div role="main" class="ui-content" id="file-viewer"></div>
-      <div data-role="footer" data-position="fixed" data-fullscreen="true">
+      <div class="footer" data-role="footer" data-position="fixed" data-fullscreen="true">
         <div data-role="navbar">
           <ul>
-            <li><a class="nav-button" data-icon="edit">Edit</a></li>
+            <li><a id="edit-button" class="nav-button" data-icon="edit">Edit</a></li>
           </ul>
         </div><!-- /navbar -->
+      </div>
+    </div>
+
+    <div data-role="page" class="page" id="edit-page">
+      <div data-role="header" data-position="fixed" data-fullscreen="true" class="header">
+        <h1 class="ui-title" id="edit-file-title"></h1>
+      </div>
+      <div role="main" class="ui-content" id="edit-viewer">
+        <textarea name="textarea"></textarea>
+      </div>
+      <div class="footer" data-role="footer" data-position="fixed" data-fullscreen="true">
+        <div data-role="navbar">
+          <ul>
+            <li><a data-rel="back" class="nav-button" data-icon="back">Back</a></li>
+            <li><a href="#save-dialog" class="nav-button dialog-trigger-button" data-icon="check">Save</a></li>
+          </ul>
+        </div><!-- /navbar -->
+      </div>
+    </div>
+
+    <div data-role="dialog" id="save-dialog">
+      <div data-role="header"><h1>Save?</h1></div>
+      <div data-role="content">
+        <p>Are you sure to save?</p>
+        <div class="ui-grid-a">
+          <div class="ui-block-a" id="save-button"><a class="ui-btn ui-shadow ui-corner-all">Save</a></div>
+          <div class="ui-block-b"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Cancel</a></div>
+        </div>
       </div>
     </div>
 
