@@ -1,55 +1,83 @@
 'use strict';
 /* global $ */
-var $scope = {};
+var Viewer = {};
+Viewer.currentPageCount = 0;
 
 if (sessionStorage.getItem('login') !== 'true') {
   window.location = "login.html";
 }
 
-var refreshList = function() {
-  console.log($scope.filelist);
-  $('#directory-container').empty();
-  var liNode;
-  for (var file of $scope.filelist) {
-    liNode = $('<li></li>');
-    if (file.type === 'dir') liNode.append('<a href="#">' + file.filename + '</a>');
-    else liNode.append(file.filename);
-    $('#directory-container').append(liNode);
-    liNode.data('filename', file.filename);
-    liNode.data('path', file.path);
-    liNode.data('type', file.type);
-  }
-  $("#directory-container").listview("refresh");
-  $('#directory-container li').on('click', function() {
-    var filename = $(this).data('filename');
-    var path = $(this).data('path');
-    var type = $(this).data('type');
-    console.log(filename, path, type);
-    if (type === 'dir') {
-      clickDir(filename, path);
-    }
-    else {
-      clickFile(filename, path);
-    }
+Viewer.clickFile = function(filename, path) {
+  $.get('/cat', {
+    'filename': path + '/' + filename
+  }, 
+  function(data) {
+    data = JSON.parse(data);
+    Viewer.loadFile(data);
   });
 };
 
-var loadList = function(list) {
+Viewer.clickDir = function(dirname, path) {
+  $.get('/ls', {
+    path: path + '/' + dirname
+  }, 
+  function(data) {
+    Viewer.constructListPage(data);
+  });
+};
+
+Viewer.constructListPage = function(list) {
+  var filelist = [];
+  var file;
   list.sort(function(a, b) {
     return a.type > b.type;
   });
-  $scope.filelist = [];
-  for (var file of list) {
-    $scope.filelist.push({
+  for (file of list) {
+    filelist.push({
       filename: file.filename, 
       path: file.path,
       type: file.type
     });
   }
-  console.log($scope.filelist);
+  
+  console.log(filelist);
+
+  var pageNode = $('#list-page-template').clone();
+  $('#view-page').before(pageNode);
+
+  var ulNode = pageNode.find('ul.list-container');
+  ulNode.empty();
+
+  var liNode;
+  for (file of filelist) {
+    liNode = $('<li></li>');
+    if (file.type === 'dir') liNode.append('<a href="#">' + file.filename + '</a>');
+    else liNode.append(file.filename);
+    liNode.data('filename', file.filename);
+    liNode.data('path', file.path);
+    liNode.data('type', file.type);
+    ulNode.append(liNode);
+  }
+  
+  ulNode.find('li').on('click', function() {
+    var filename = $(this).data('filename');
+    var path = $(this).data('path');
+    var type = $(this).data('type');
+    console.log('clicking on ', filename, path, type);
+    if (type === 'dir') {
+      Viewer.clickDir(filename, path);
+    }
+    else {
+      Viewer.clickFile(filename, path);
+    }
+  });
+
+  pageNode.attr('id', Viewer.currentPageCount);
+  $.mobile.changePage('#' + pageNode.attr('id')); 
+  Viewer.currentPageCount ++;
 };
 
-var loadFile = function(responseData) {
+Viewer.loadFile = function(responseData) {
   console.log(responseData);
   if (responseData.mediaType === false) { // text
     $('#file-viewer').html(responseData.data);
@@ -74,35 +102,12 @@ var loadFile = function(responseData) {
   $.mobile.changePage('#view-page'); 
 };
 
-var clickFile = function(filename, path) {
-  $.get('/cat', {
-    'filename': path + '/' + filename
-  }, 
-  function(data) {
-    data = JSON.parse(data);
-    loadFile(data);
-  });
-};
-
-var clickDir = function(dirname, path) {
-  $.get('/ls', {
-    path: path + '/' + dirname
-  }, 
-  function(data) {
-    loadList(data);
-    refreshList();
-  });
-  
-};
-
 // Initialize 
-$scope.currentPath = '';
 $.get('/ls', {
     path: '/'
   },
   function(data) {
-    loadList(data);
-    refreshList();
+    Viewer.constructListPage(data);
   }
 );
 
