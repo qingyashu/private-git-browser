@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require('fs');
 
-const g_directoryPath = '../qq/';
+const g_directoryPath = '../test_repo/';
 const git = require('simple-git')(g_directoryPath);
 
 var app = express();
@@ -59,11 +59,13 @@ app.get('/ls', function(req, res) {
         if (stats.isFile()) type = 'file';
         else if (stats.isDirectory()) type = 'dir';
         else type = undefined;
-        fileList.push({
-          filename: filename, 
-          type: type,
-          path: req.query.path
-        });
+        if (filename[0] !== '.') {
+          fileList.push({
+            filename: filename, 
+            type: type,
+            path: req.query.path
+          });
+        }
         readStats(p);
       });
     };

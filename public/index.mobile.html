@@ -30,22 +30,47 @@
       <div data-role="footer" data-position="fixed" data-fullscreen="true">
         <div data-role="navbar">
           <ul>
-            <li><a class="nav-button" data-icon="arrow-d">Pull</a></li>
-            <li><a class="nav-button" href="#contact" data-icon="check">Commit</a></li>
-            <li><a class="nav-button" data-icon="arrow-u">Push</a></li>
+            <li><a class="nav-button" href="#pull-dialog" data-icon="arrow-d">Pull</a></li>
+            <li><a class="nav-button" href="#commit-dialog" data-icon="check">Commit</a></li>
+            <li><a class="nav-button" href="#push-dialog" data-icon="arrow-u">Push</a></li>
             <li><a class="nav-button" data-icon="plus">Create</a></li>
           </ul>
         </div><!-- /navbar -->
       </div>
     </div>
 
-    <div data-role="dialog" id="contact">
-      <div data-role="header"><h1>Clicked!</h1></div>
+    <div data-role="dialog" id="pull-dialog">
+      <div data-role="header"><h1>Pull?</h1></div>
       <div data-role="content">
-        <p>Clicked content!</p>
-        <a href="#" data-rel="back" data-role="button">Go back</a>
+        <p>Are you sure to pull?</p>
+        <div class="ui-grid-a">
+          <div class="ui-block-a"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Pull</a></div>
+          <div class="ui-block-b"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Cancel</a></div>
+        </div>
       </div>
-    </div>   
+    </div>
+
+    <div data-role="dialog" id="commit-dialog">
+      <div data-role="header"><h1>Commit?</h1></div>
+      <div data-role="content">
+        <p>Are you sure to commit?</p>
+        <div class="ui-grid-a">
+          <div class="ui-block-a"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Commit</a></div>
+          <div class="ui-block-b"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Cancel</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div data-role="dialog" id="push-dialog">
+      <div data-role="header"><h1>Push?</h1></div>
+      <div data-role="content">
+        <p>Are you sure to push?</p>
+        <div class="ui-grid-a">
+          <div class="ui-block-a"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Push</a></div>
+          <div class="ui-block-b"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Cancel</a></div>
+        </div>
+      </div>
+    </div>
 
     <div data-role="page" class="page" id="view-page">
       <div data-role="header" data-position="fixed" data-fullscreen="true" class="header">
@@ -54,7 +79,11 @@
       </div>
       <div role="main" class="ui-content" id="file-viewer"></div>
       <div data-role="footer" data-position="fixed" data-fullscreen="true">
-        <h1>Fixed Footer!</h1>
+        <div data-role="navbar">
+          <ul>
+            <li><a class="nav-button" data-icon="edit">Edit</a></li>
+          </ul>
+        </div><!-- /navbar -->
       </div>
     </div>
 

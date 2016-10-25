@@ -92,10 +92,19 @@ Viewer.constructListPage = function(list, dirname) {
 
 };
 
+Viewer.loadTextFile = function(data) {
+  var lines = data.split('\n');
+  $('#file-viewer').empty();
+  for (var line of lines) {
+    $('#file-viewer').append('<p><pre>' + line + '</pre></p>');
+  }
+};
+
 Viewer.loadFile = function(responseData) {
   // load file content 
   if (responseData.mediaType === false) { // text
-    $('#file-viewer').html(responseData.data);
+    
+    Viewer.loadTextFile(responseData.data);
   }
   else {
     console.log(responseData.type);
@@ -130,3 +139,4 @@ $.get('/ls', {
     Viewer.constructListPage(data, '/');
   }
 );
+
