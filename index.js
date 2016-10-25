@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require('fs');
 
-const g_directoryPath = '../stm2016-html-i18n-task01/';
+const g_directoryPath = '../qq/';
 const git = require('simple-git')(g_directoryPath);
 
 var app = express();
@@ -64,7 +64,6 @@ app.get('/ls', function(req, res) {
           type: type,
           path: req.query.path
         });
-        console.log('name=' + filename + ' type=' + type + ' path=' + req.query.path);
         readStats(p);
       });
     };
@@ -113,6 +112,7 @@ app.get('/cat', function(req, res) {
       fs.readFile(filePath, (err, data) => {
         var toSend = data.toString('base64');
         res.send({
+          filename: req.query.filename, 
           success: true,
           data: toSend,
           mediaType: mediaType,
@@ -123,6 +123,7 @@ app.get('/cat', function(req, res) {
     else {
       fs.readFile(filePath, 'utf8', (err, data) => {
         res.send({
+          filename: req.query.filename, 
           success: true,
           data: data,
           mediaType: mediaType,

@@ -7,6 +7,10 @@ if (sessionStorage.getItem('login') !== 'true') {
   window.location = "login.html";
 }
 
+Viewer.removeDuplicateSlash = function(str) {
+  return str.replace(/\/+/g, '/');
+};
+
 Viewer.clickFile = function(filename, path) {
   $.get('/cat', {
     'filename': path + '/' + filename
@@ -22,7 +26,7 @@ Viewer.clickDir = function(dirname, path) {
     path: path + '/' + dirname
   }, 
   function(data) {
-    var dirTitle = (path + '/' + dirname).replace(/\/+/g, '/');
+    var dirTitle = Viewer.removeDuplicateSlash(path + '/' + dirname);
     Viewer.constructListPage(data, dirTitle);
   });
 };
@@ -88,7 +92,7 @@ Viewer.constructListPage = function(list, dirname) {
 };
 
 Viewer.loadFile = function(responseData) {
-  console.log(responseData);
+  // load file content 
   if (responseData.mediaType === false) { // text
     $('#file-viewer').html(responseData.data);
   }
@@ -109,6 +113,15 @@ Viewer.loadFile = function(responseData) {
       return;
     }
   }
+
+  // back button 
+  var activePageID = Number($.mobile.activePage.attr('id'));
+  $('#view-page').find('.back-button').attr('href', '#' + activePageID);
+
+  // display title 
+  $('#view-page').find('#file-title').text(Viewer.removeDuplicateSlash(responseData.filename));
+
+  // change to page 
   $.mobile.changePage('#view-page'); 
 };
 
