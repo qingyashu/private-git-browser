@@ -49,7 +49,7 @@ app.get('/login', function(req, res) {
  * }, ...]
  */
 app.get('/ls', function(req, res) {
-  console.log('====================' + req.query.path + '====================');
+  console.log('/ls: ' + req.query.path);
 
   var fileList = [];
   var path = g_directoryPath + req.query.path;
@@ -105,7 +105,7 @@ const typesMap = {
  */
 app.get('/cat', function(req, res) {
   var filePath = g_directoryPath + '/' + req.query.filename;
-  console.log(' ~~~~~~~~~~~~ ' + filePath + ' ~~~~~~~~~~~~ ');
+  console.log('/cat: ' + filePath);
   fs.exists(filePath, (exists) => {
     if (!exists) {
       res.type('application/json');
@@ -125,7 +125,7 @@ app.get('/cat', function(req, res) {
       }
     }
 
-    console.log(res.get('Content-Type'));
+    console.log('file type: ' + res.get('Content-Type'));
     
     if (mediaType) {
       fs.readFile(filePath, (err, data) => {
@@ -161,9 +161,8 @@ app.get('/cat', function(req, res) {
  * res.send(boolean success)
  */
 app.post('/write', function(req, res) {
-  console.log(req.body);
   var filePath = g_directoryPath + '/' + req.body.filename;
-  console.log('receive saving request ' + filePath);
+  console.log('/write ' + filePath);
   fs.writeFile(filePath, req.body.content, 'utf8', (err) => {
     if (err) {
       res.send({
