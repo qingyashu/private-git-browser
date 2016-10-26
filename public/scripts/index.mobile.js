@@ -3,6 +3,7 @@
 var Viewer = {};
 Viewer.currentPageCount = 0;
 Viewer.dialogAtPageID = undefined;
+Viewer.currentSwipingFilename = undefined;
 
 // if (sessionStorage.getItem('login') !== 'true') {
 //   window.location = "login.html";
@@ -109,6 +110,31 @@ Viewer.cosntructHiddenMenu = function(file) {
   return div;
 };
 
+Viewer.swipeLeft = function(el) {
+  if (Viewer.currentSwipingFilename !== undefined && el.data('filename') !== Viewer.currentSwipingFilename) {// if there is another list swiped
+    $.mobile.activePage.find('.list-container').find('li').removeClass('swiped');
+    Viewer.currentSwipingFilename = undefined;
+    return;
+  }
+  Viewer.currentSwipingFilename = el.data('filename');
+  console.log(el);
+  el.addClass('swiped');
+};
+
+Viewer.swipeRight = function(el) {
+  if (Viewer.currentSwipingFilename !== undefined && el.data('filename') !== Viewer.currentSwipingFilename) {// if there is another list swiped
+    $.mobile.activePage.find('.list-container').find('li').removeClass('swiped');
+    Viewer.currentSwipingFilename = undefined;
+    return;
+  }
+
+  if (el.hasClass('swiped') === false) {
+    return;
+  }
+  el.removeClass('swiped');
+  Viewer.currentSwipingFilename = undefined;
+};
+
 Viewer.constructListPage = function(list, dirname) {
   // data objects
   var filelist = list;
@@ -141,27 +167,16 @@ Viewer.constructListPage = function(list, dirname) {
   
   // bind clicking events
   ulNode.find('li').on('click', function() {
-    var filename = $(this).data('filename');
-    var path = $(this).data('path');
-    var type = $(this).data('type');
-    console.log('clicking on ', filename, path, type);
-    if (type === 'dir') {
-      Viewer.clickDir(filename, path);
-    }
-    else {
-      Viewer.clickFile(filename, path);
-    }
+    Viewer.clickList($(this));
   });
 
   // bind fliping list items 
   ulNode.find('li').on('swipeleft', function() {
-    console.log($(this));
-    $(this).addClass('swiped');
+    Viewer.swipeLeft($(this));
   });
 
   ulNode.find('li').on('swiperight', function() {
-    if ($(this).hasClass('swiped') === false) return;
-    $(this).removeClass('swiped');
+    Viewer.swipeRight($(this));
   });
 
   // clicking create: clear filename input
@@ -196,6 +211,24 @@ Viewer.constructListPage = function(list, dirname) {
   // refresh height of hidden buttons
   $('.hidden-edit-button').css('height', $('.list-container li').outerHeight() - 1);
   $('.hidden-delete-button').css('height', $('.list-container li').outerHeight() - 1);
+};
+
+Viewer.clickList = function(el) {
+  if (Viewer.currentSwipingFilename !== undefined) {
+    Viewer.currentSwipingFilename = undefined;
+    $.mobile.activePage.find('.list-container').find('li').removeClass('swiped');
+    return;
+  }
+  var filename = el.data('filename');
+  var path = el.data('path');
+  var type = el.data('type');
+  console.log('clicking on ', filename, path, type);
+  if (type === 'dir') {
+    Viewer.clickDir(filename, path);
+  }
+  else {
+    Viewer.clickFile(filename, path);
+  }
 };
 
 Viewer.refreshDirPage = function(pageID) {
@@ -233,19 +266,19 @@ Viewer.refreshDirPage = function(pageID) {
       liNode = Viewer.constructListNode(file);
       ulNode.append(liNode);
     }
+
+    // bind fliping list items 
+    ulNode.find('li').on('swipeleft', function() {
+      Viewer.swipeLeft($(this));
+    });
+
+    ulNode.find('li').on('swiperight', function() {
+      Viewer.swipeRight($(this));
+    });
     
     // bind clicking events
     ulNode.find('li').on('click', function() {
-      var filename = $(this).data('filename');
-      var path = $(this).data('path');
-      var type = $(this).data('type');
-      console.log('clicking on ', filename, path, type);
-      if (type === 'dir') {
-        Viewer.clickDir(filename, path);
-      }
-      else {
-        Viewer.clickFile(filename, path);
-      }
+      Viewer.clickList($(this));
     });
 
     ulNode.listview('refresh');
