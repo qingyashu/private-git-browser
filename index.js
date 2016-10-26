@@ -16,8 +16,8 @@ app.use(express.static('public/'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 
-app.listen(3000, function () {
-  console.log('Server listening on port 3000!');
+app.listen(11022, function () {
+  console.log('Server listening on port 11022!');
 });
 
 // log in module
