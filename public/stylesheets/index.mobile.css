@@ -17,3 +17,49 @@
 #file-viewer video {
   width: 100%;
 }
+
+.list-item-icon-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.list-item-inner-wrapper {
+  display: table-cell;
+  width: 100%;
+}
+
+.list-item-last-date,
+.list-item-message {
+  float: right;
+}
+
+.list-item-author-name, 
+.list-item-message { 
+  color: #ccc;
+  font-size: .9em;
+  font-weight: lighter;
+  text-shadow: none;
+}
+
+.ui-icon-my-dir {
+  background-image: url("../images/dir-icon.png");
+}
+
+.ui-icon-my-file {
+  background-image: url("../images/file-icon.png");
+}
+
+.ui-icon-my-file,
+.ui-icon-my-dir {
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  margin-right: 10px;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position-x: 0;
+  background-position-y: 0;
+  background-color: #ccc;
+  border: 5px solid #ccc;
+  border-radius: 5px;
+}

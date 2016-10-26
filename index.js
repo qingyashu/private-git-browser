@@ -1,12 +1,20 @@
 const express = require("express");
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const compression = require('compression');
 
 const g_directoryPath = '../test_repo/';
 const git = require('simple-git')(g_directoryPath);
 
+var removeDuplicateSlash = function(str) {
+  return str.replace(/\/+/g, '/');
+};
+
 var app = express();
+app.use(compression());
 app.use(express.static('public/'));
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 
 app.listen(3000, function () {
   console.log('Server listening on port 3000!');
@@ -60,14 +68,22 @@ app.get('/ls', function(req, res) {
         if (stats.isFile()) type = 'file';
         else if (stats.isDirectory()) type = 'dir';
         else type = undefined;
-        if (filename[0] !== '.') {
-          fileList.push({
-            filename: filename, 
-            type: type,
-            path: req.query.path
-          });
-        }
-        readStats(p);
+
+        git.log({'file': removeDuplicateSlash('./' + req.query.path + '/' + filename)}, function(err, log) {
+          if (filename[0] !== '.' && log) {
+            fileList.push({
+              filename: filename, 
+              type: type,
+              path: req.query.path,
+              last_date: log.latest.date,
+              message: log.latest.message,
+              author_name: log.latest.author_name,
+              author_email: log.latest.author_email
+            });
+          }
+          readStats(p);
+        });
+
       });
     };
     readStats(filePointer);
@@ -139,8 +155,6 @@ app.get('/cat', function(req, res) {
 });
 
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 /**
  * write file , or create file if not exists
  * req.query: {filename: filename, content: content}

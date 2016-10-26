@@ -10,8 +10,6 @@
     <link rel="icon" href="./images/favicon.ico">
 
     <script type="text/javascript" src="./scripts/lib/jquery-1.12.4.min.js"></script>
-    <!-- <script type="text/javascript" src="./scripts/lib/angular.min.js"></script> -->
-    
     <script type="text/javascript" src="./scripts/lib/jquery.mobile-1.4.5.min.js"></script>
     <link rel="stylesheet" href="./stylesheets/lib/jquery.mobile-1.4.5.min.css" />
     <link rel="stylesheet" href="./stylesheets/index.mobile.css" />
@@ -34,7 +32,7 @@
             <li><a class="nav-button dialog-trigger-button" href="#pull-dialog" data-icon="arrow-d">Pull</a></li>
             <li><a class="nav-button dialog-trigger-button" href="#commit-dialog" data-icon="check">Commit</a></li>
             <li><a class="nav-button dialog-trigger-button" href="#push-dialog" data-icon="arrow-u">Push</a></li>
-            <li><a class="nav-button dialog-trigger-button" href="#filename-dialog" data-icon="plus">Create</a></li>
+            <li><a class="nav-button dialog-trigger-button nav-create-button" href="#filename-dialog" data-icon="plus">Create</a></li>
           </ul>
         </div><!-- /navbar -->
       </div>
@@ -130,7 +128,7 @@
       <div data-role="header"><h1>Create New File?</h1></div>
       <div data-role="content">
         <p>Please input name of the file</p>
-        <input type="text" id="file-name" value="">
+        <input type="text" id="file-name" value="" placeholder="Input filename">
         <div class="ui-grid-a">
           <div class="ui-block-a" id="create-button"><a class="ui-btn ui-shadow ui-corner-all">Create</a></div>
           <div class="ui-block-b"><a href="#" data-rel="back" class="ui-btn ui-shadow ui-corner-all">Cancel</a></div>

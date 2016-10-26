@@ -2,7 +2,7 @@
 /* global $ */
 var Viewer = {};
 Viewer.currentPageCount = 0;
-Viewer.dialogAtPageID;
+Viewer.dialogAtPageID = undefined;
 
 if (sessionStorage.getItem('login') !== 'true') {
   window.location = "login.html";
@@ -32,24 +32,50 @@ Viewer.clickDir = function(dirname, path) {
   });
 };
 
+var beautyDate = function(date) {
+  return date.toISOString().substr(0, 10);
+};
+
+var trimString = function(str, length) {
+  if (length === undefined) length = 20;
+  if (str.length < length) return str;
+  else return str.substr(0, length - 3) + '...';
+};
+
+Viewer.constructListNode = function(file) {
+  var liNode = $('<li></li>');
+  var iconWrapper = $('<div class="list-item-icon-wrapper"></div>');
+  iconWrapper.appendTo(liNode);
+  var innerWrapper = $('<div class="list-item-inner-wrapper"></div>');
+  innerWrapper.appendTo(liNode);
+  if (file.type === 'dir') {
+    iconWrapper.append('<span class="ui-icon-my-dir"></span>');
+  }
+  else {
+    iconWrapper.append('<span class="ui-icon-my-file"></span>');
+  }
+  innerWrapper.append('<div><span class="list-item-file-name">' + file.filename + '</span><span class="list-item-last-date">' + beautyDate(file.last_date) + '</span></div>');
+  innerWrapper.append('<div><span class="list-item-author-name">' + file.author_name + '</span><span class="list-item-message">' + trimString(file.message, 30) + '</span></div>');
+  liNode.data('filename', file.filename);
+  liNode.data('path', file.path);
+  liNode.data('type', file.type);
+  return liNode;
+};
+
 Viewer.constructListPage = function(list, dirname) {
   // data objects
-  var filelist = [];
+  var filelist = list;
   var file;
-  list.sort(function(a, b) {
+  for (file of filelist) {
+    file.last_date = new Date(file.last_date);
+  }
+  filelist.sort(function(a, b) {
     if (a.type === 'dir' && b.type === 'file') return -1;
     if (b.type === 'dir' && a.type === 'file') return 1;
     if (a.filename > b.filename) return 1;
     if (a.filename < b.filename) return -1;
     return 0;
   });
-  for (file of list) {
-    filelist.push({
-      filename: file.filename, 
-      path: file.path,
-      type: file.type
-    });
-  }  
   console.log(filelist);
 
   // add contents
@@ -59,12 +85,7 @@ Viewer.constructListPage = function(list, dirname) {
   ulNode.empty();
   var liNode;
   for (file of filelist) {
-    liNode = $('<li></li>');
-    if (file.type === 'dir') liNode.append('<a href="#">' + file.filename + '</a>');
-    else liNode.append(file.filename);
-    liNode.data('filename', file.filename);
-    liNode.data('path', file.path);
-    liNode.data('type', file.type);
+    liNode = Viewer.constructListNode(file);
     ulNode.append(liNode);
   }
   
@@ -80,6 +101,11 @@ Viewer.constructListPage = function(list, dirname) {
     else {
       Viewer.clickFile(filename, path);
     }
+  });
+
+  // clicking create: clear filename input
+  $('.nav-create-button').click(function() {
+    $('#file-name').val('');
   });
 
   // back button
@@ -104,7 +130,7 @@ Viewer.constructListPage = function(list, dirname) {
   Viewer.currentPageCount ++;
 
   // remember dirname
-  pageNode.data('dirname', dirname)
+  pageNode.data('dirname', dirname);
 };
 
 Viewer.refreshDirPage = function(pageID) {
@@ -116,22 +142,18 @@ Viewer.refreshDirPage = function(pageID) {
   }, 
   function(list) {
     // data objects
-    var filelist = [];
+    var filelist = list;
     var file;
-    list.sort(function(a, b) {
+    for (file of filelist) {
+      file.last_date = new Date(file.last_date);
+    }
+    filelist.sort(function(a, b) {
       if (a.type === 'dir' && b.type === 'file') return -1;
       if (b.type === 'dir' && a.type === 'file') return 1;
       if (a.filename > b.filename) return 1;
       if (a.filename < b.filename) return -1;
       return 0;
     });
-    for (file of list) {
-      filelist.push({
-        filename: file.filename, 
-        path: file.path,
-        type: file.type
-      });
-    }  
     console.log(filelist);
 
     // add contents
@@ -139,12 +161,7 @@ Viewer.refreshDirPage = function(pageID) {
     ulNode.empty();
     var liNode;
     for (file of filelist) {
-      liNode = $('<li></li>');
-      if (file.type === 'dir') liNode.append('<a href="#">' + file.filename + '</a>');
-      else liNode.append(file.filename);
-      liNode.data('filename', file.filename);
-      liNode.data('path', file.path);
-      liNode.data('type', file.type);
+      liNode = Viewer.constructListNode(file);
       ulNode.append(liNode);
     }
     
@@ -165,7 +182,7 @@ Viewer.refreshDirPage = function(pageID) {
     ulNode.listview('refresh');
     $.mobile.changePage('#' + pageID);
   });
-}
+};
 
 Viewer.loadTextFile = function(data, filename) {
   $('#file-viewer').data('content', data);
@@ -225,12 +242,18 @@ $.get('/ls', {
 
 $('#pull-button').click(function() {
   console.log('pull');
-  $.get('/git_pull', function(data, states) {
-    $.mobile.changePage('#' + Viewer.dialogAtPageID);
-    setTimeout(function() {
-      $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Pulled');
-      $.mobile.activePage.find('.popupBasic').popup('open'); 
-    }, 1000);
+  $.get('/git_pull', function(data) {
+    if (data.succses) {
+      console.log(data.update);
+      $.mobile.changePage('#' + Viewer.dialogAtPageID);
+      setTimeout(function() {
+        $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Pulled');
+        $.mobile.activePage.find('.popupBasic').popup('open'); 
+      }, 1000);
+    }
+    else {
+      console.log(data.err);
+    }
   });
 });
 
@@ -239,23 +262,35 @@ $('#commit-button').click(function() {
   $.get('/git_commit', {
       message: sessionStorage.getItem('username') + ' commit in web, ' + Date()
     }, 
-    function(data, states) {
-      $.mobile.changePage('#' + Viewer.dialogAtPageID);
-      setTimeout(function() {
-        $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Committed');
-        $.mobile.activePage.find('.popupBasic').popup('open'); 
-      }, 1000);
+    function(data) {
+      if (data.success) {
+        console.log(data.info);
+        $.mobile.changePage('#' + Viewer.dialogAtPageID);
+        setTimeout(function() {
+          $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Committed');
+          $.mobile.activePage.find('.popupBasic').popup('open'); 
+        }, 1000);
+      }
+      else {
+        console.log(data.err);
+      }
     });
 });
 
 $('#push-button').click(function() {
   console.log('push');
-  $.get('/git_push', function(data, states) {
-    $.mobile.changePage('#' + Viewer.dialogAtPageID);
-    setTimeout(function() {
-      $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Pushed');
-      $.mobile.activePage.find('.popupBasic').popup('open'); 
-    }, 1000);
+  $.get('/git_push', function(data) {
+    if (data.success) {
+      console.log(data.info);
+      $.mobile.changePage('#' + Viewer.dialogAtPageID);
+      setTimeout(function() {
+        $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Pushed');
+        $.mobile.activePage.find('.popupBasic').popup('open'); 
+      }, 1000);
+    }
+    else {
+      console.log(data.err);
+    }
   });
 });
 
@@ -283,6 +318,7 @@ $('#save-button').click(function() {
       $.mobile.changePage('#view-page');
       if (data.success) {
         $('#file-viewer').html('<pre>' + $('#edit-viewer').find('textarea').val() + '</pre>');
+        $('#file-viewer').data('content', $('#edit-viewer').find('textarea').val());
         setTimeout(function() {
           $.mobile.activePage.find('.popupBasic').find('.popup-content').text('Success!');
           $.mobile.activePage.find('.popupBasic').popup('open'); 
@@ -304,11 +340,17 @@ $('#create-button').click(function() {
     url: '/write', 
     dataType: 'json', 
     data: {
-      filename: $('#file-name').val(),
+      filename: Viewer.removeDuplicateSlash($('#'+Viewer.dialogAtPageID).data('dirname') + '/' + $('#file-name').val()),
       content: ''
     }, 
     success: function(data) {
-      Viewer.refreshDirPage(Viewer.dialogAtPageID);
+      if (data.success) {
+        Viewer.refreshDirPage(Viewer.dialogAtPageID);
+      }
+      else {
+        console.log('error to create file');
+      }
     }
   });
 });
+
