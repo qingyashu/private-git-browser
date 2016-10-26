@@ -62,6 +62,53 @@ Viewer.constructListNode = function(file) {
   return liNode;
 };
 
+// click edit from list view, directly jump to edit page 
+Viewer.edit = function(file) {
+  $.get('/cat', {
+    'filename': file.path + '/' + file.filename
+  }, 
+  function(data) {
+    // set back page id for view page
+    Viewer.dialogAtPageID = $.mobile.activePage.attr('id');
+    $('#view-page-back-button').attr('href', '#' + Viewer.dialogAtPageID);
+
+    data = JSON.parse(data);
+    console.log(data);
+    var fileContent = data.data;
+    $('#edit-page').find('textarea').val(fileContent);
+    $('#edit-page').find('#edit-file-title').html(file.filename);
+    $.mobile.changePage('#edit-page');
+    var width = $(window).width() - 30;
+    $('#edit-viewer').find('textarea').css('width', width);
+
+    Viewer.currentEditingFilename = file.filename;
+
+  });
+};
+
+Viewer.delete = function(file) {
+  file = 1;
+  // TODO
+};
+
+Viewer.cosntructHiddenMenu = function(file) {
+  var div = $('<div class="hidden-menu-wrapper"></div>');
+  div.data('file', file);
+  var editNode = $('<span class="hidden-edit-button"></span>');
+  div.append(editNode);
+  editNode.click(function() {
+    // TODO 
+    Viewer.edit($(this).parent().data('file'));
+  });
+  var deleteNode = $('<span class="hidden-delete-button"></span>');
+  div.append(deleteNode);
+  deleteNode.click(function() {
+    // TODO 
+    Viewer.delete($(this).parent().data('file'));
+  });
+  return div;
+};
+
 Viewer.constructListPage = function(list, dirname) {
   // data objects
   var filelist = list;
@@ -85,6 +132,9 @@ Viewer.constructListPage = function(list, dirname) {
   ulNode.empty();
   var liNode;
   for (file of filelist) {
+    // add hidden bar for swipping
+    ulNode.append(Viewer.cosntructHiddenMenu(file));
+
     liNode = Viewer.constructListNode(file);
     ulNode.append(liNode);
   }
@@ -101,6 +151,17 @@ Viewer.constructListPage = function(list, dirname) {
     else {
       Viewer.clickFile(filename, path);
     }
+  });
+
+  // bind fliping list items 
+  ulNode.find('li').on('swipeleft', function() {
+    console.log($(this));
+    $(this).addClass('swiped');
+  });
+
+  ulNode.find('li').on('swiperight', function() {
+    if ($(this).hasClass('swiped') === false) return;
+    $(this).removeClass('swiped');
   });
 
   // clicking create: clear filename input
@@ -131,6 +192,10 @@ Viewer.constructListPage = function(list, dirname) {
 
   // remember dirname
   pageNode.data('dirname', dirname);
+
+  // refresh height of hidden buttons
+  $('.hidden-edit-button').css('height', $('.list-container li').outerHeight() - 1);
+  $('.hidden-delete-button').css('height', $('.list-container li').outerHeight() - 1);
 };
 
 Viewer.refreshDirPage = function(pageID) {
@@ -161,6 +226,10 @@ Viewer.refreshDirPage = function(pageID) {
     ulNode.empty();
     var liNode;
     for (file of filelist) {
+      // add hidden bar for swipping
+      ulNode.append(Viewer.cosntructHiddenMenu(file));
+      
+      // add list item
       liNode = Viewer.constructListNode(file);
       ulNode.append(liNode);
     }
@@ -181,6 +250,10 @@ Viewer.refreshDirPage = function(pageID) {
 
     ulNode.listview('refresh');
     $.mobile.changePage('#' + pageID);
+
+    // refresh height of hidden buttons
+    $('.hidden-edit-button').css('height', $('.list-container li').outerHeight() - 1);
+    $('.hidden-delete-button').css('height', $('.list-container li').outerHeight() - 1);
   });
 };
 
@@ -294,13 +367,14 @@ $('#push-button').click(function() {
   });
 });
 
-// jump to editing page
+// jump to editing page, from view page
 $('#edit-button').click(function() {
   $('#edit-page').find('textarea').val($('#file-viewer').data('content'));
   $('#edit-page').find('#edit-file-title').html($('#file-viewer').data('filename'));
   $.mobile.changePage('#edit-page');
   var width = $(window).width() - 30;
   $('#edit-viewer').find('textarea').css('width', width);
+  Viewer.currentEditingFilename = $('#file-viewer').data('filename');
 });
 
 // save edit result 
@@ -310,7 +384,7 @@ $('#save-button').click(function() {
     url: '/write', 
     dataType: 'json', 
     data: {
-      filename: $('#file-viewer').data('filename'),
+      filename: Viewer.currentEditingFilename, 
       content: $('#edit-viewer').find('textarea').val()
     }, 
     success: function(data) {

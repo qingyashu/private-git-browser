@@ -70,3 +70,42 @@
   text-shadow: none;
   text-decoration: none;
 }
+
+ul.ui-listview.list-container li {
+  border-right: 0;
+  border-left: 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin-top: -1px;
+  border-radius: 0;
+  position: relative;
+  left: 0;
+  transition: left 250ms;
+  -webkit-transition: left 250ms;
+}
+
+ul.list-container li.swiped {
+  position: relative;
+  left: -140px;
+}
+
+.hidden-edit-button, 
+.hidden-delete-button {
+  width: 70px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: 23px;
+}
+
+.hidden-edit-button {
+  right: 70px;
+  background-color: #007AFF;
+  background-image: url("../images/edit-icon.png");
+}
+
+.hidden-delete-button {
+  right: 0;
+  background-color: #FF3B30;
+  background-image: url("../images/delete-icon.png");
+}
