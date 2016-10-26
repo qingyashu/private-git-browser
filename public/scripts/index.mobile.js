@@ -4,9 +4,9 @@ var Viewer = {};
 Viewer.currentPageCount = 0;
 Viewer.dialogAtPageID = undefined;
 
-if (sessionStorage.getItem('login') !== 'true') {
-  window.location = "login.html";
-}
+// if (sessionStorage.getItem('login') !== 'true') {
+//   window.location = "login.html";
+// }
 
 Viewer.removeDuplicateSlash = function(str) {
   return str.replace(/\/+/g, '/');
