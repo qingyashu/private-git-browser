@@ -25,7 +25,7 @@ app.get('/login', function(req, res) {
   var name = req.query.name;
   var pswd = req.query.pswd;
   fs.readFile('./data/passwd', 'utf8', (err, data) => {
-    var lines = data.split('\r\n');
+    var lines = data.split('\n');
     var line, content;
     for (line of lines) {
       content = line.split(',');
@@ -69,16 +69,18 @@ app.get('/ls', function(req, res) {
         else if (stats.isDirectory()) type = 'dir';
         else type = undefined;
 
-        git.log({'file': removeDuplicateSlash('./' + req.query.path + '/' + filename)}, function(err, log) {
+        var targetFilename = removeDuplicateSlash('./' + req.query.path + '/' + filename);
+        console.log(targetFilename);
+        git.log({'file': targetFilename}, function(err, log) {
           if (filename[0] !== '.' && log) {
             fileList.push({
               filename: filename, 
               type: type,
               path: req.query.path,
-              last_date: log.latest.date,
-              message: log.latest.message,
-              author_name: log.latest.author_name,
-              author_email: log.latest.author_email
+              last_date: log.latest === null ? undefined : log.latest.date,
+              message: log.latest === null ? 'Not commited' : log.latest.message,
+              author_name: log.latest === null ? 'Not commited' : log.latest.author_name,
+              author_email: log.latest === null? 'Not commited' : log.latest.author_email
             });
           }
           readStats(p);

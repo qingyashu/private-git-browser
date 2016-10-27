@@ -5,9 +5,9 @@ Viewer.currentPageCount = 0;
 Viewer.dialogAtPageID = undefined;
 Viewer.currentSwipingFilename = undefined;
 
-// if (sessionStorage.getItem('login') !== 'true') {
-//   window.location = "login.html";
-// }
+if (sessionStorage.getItem('login') !== 'true') {
+  window.location = "login.html";
+}
 
 Viewer.removeDuplicateSlash = function(str) {
   return str.replace(/\/+/g, '/');
@@ -34,7 +34,12 @@ Viewer.clickDir = function(dirname, path) {
 };
 
 var beautyDate = function(date) {
-  return date.toISOString().substr(0, 10);
+  if (date instanceof Date) {
+    return date.toISOString().substr(0, 10);
+  }
+  else {
+    return date;
+  }
 };
 
 var trimString = function(str, length) {
@@ -140,7 +145,9 @@ Viewer.constructListPage = function(list, dirname) {
   var filelist = list;
   var file;
   for (file of filelist) {
-    file.last_date = new Date(file.last_date);
+    if (file.last_date !== undefined && file.last_date === 'undefined') {
+      file.last_date = new Date(file.last_date);
+    }
   }
   filelist.sort(function(a, b) {
     if (a.type === 'dir' && b.type === 'file') return -1;
@@ -243,7 +250,9 @@ Viewer.refreshDirPage = function(pageID) {
     var filelist = list;
     var file;
     for (file of filelist) {
-      file.last_date = new Date(file.last_date);
+      if (file.last_date !== undefined && file.last_date === 'undefined') {
+        file.last_date = new Date(file.last_date);
+      }
     }
     filelist.sort(function(a, b) {
       if (a.type === 'dir' && b.type === 'file') return -1;
