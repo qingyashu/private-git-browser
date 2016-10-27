@@ -145,7 +145,7 @@ Viewer.constructListPage = function(list, dirname) {
   var filelist = list;
   var file;
   for (file of filelist) {
-    if (file.last_date !== undefined && file.last_date === 'undefined') {
+    if (file.last_date !== undefined && file.last_date !== 'undefined') {
       file.last_date = new Date(file.last_date);
     }
   }
@@ -375,7 +375,7 @@ $('#pull-button').click(function() {
 $('#commit-button').click(function() {
   console.log('commit');
   $.get('/git_commit', {
-      message: sessionStorage.getItem('username') + ' commit in web, ' + Date()
+      message: sessionStorage.getItem('username') + ' commit in web, ' + beautyDate(new Date())
     }, 
     function(data) {
       if (data.success) {
